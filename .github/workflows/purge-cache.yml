@@ -1,0 +1,35 @@
+name: Purge Cloudflare Cache
+
+on:
+  push:
+    branches:
+      - main # or your deployment branch
+
+jobs:
+  purge-cache:
+    name: Purge Updated Assets from Cloudflare
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Purge cache via Cloudflare API
+        run: |
+          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{
+              "files": [
+                "https://sora-app.pages.dev/image1.jpg",
+                "https://sora-app.pages.dev/image2.jpg"
+                "https://sora-app.pages.dev/image3.jpg"
+              ]
+            }'
+      - name: Get list of changed files
+        id: changed
+        run: |
+          echo "::set-output name=files::$(git diff --name-only ${{ github.sha }}^ ${{ github.sha }} | grep -E '\.(jpg|png|js|css)' | awk '{print "\"https://your-project.pages.dev/" $1 "\"" }' | paste -sd, -)"
+      - name: Purge changed files
+        run: |
+          curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data "{\"files\":[${{ steps.changed.outputs.files }}]}"
