@@ -1,0 +1,25 @@
+# HTML - short cache, so updates reflect quickly
+/*
+  Cache-Control: public, max-age=300, must-revalidate
+
+# Images - cache for 1 year, best for unchanging files
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+# JavaScript and CSS - cache for 1 year if hashed
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts - long-term cache
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
